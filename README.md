@@ -4,11 +4,11 @@ The fallowing description will document requirements for reproducing task result
 
 
 Task 1
-Requires: 
-	-Installed Oracle DB with table for storing standart OHLC data. This part is taken care in Task 2 where db is installed and includes additional task for creating table stocks_candle (/support_files/create_stock_table.sql for reference)	
-	-Libraries in Python/stock.py are assubed to be already installed
-	-API key needs to be obtained from https://www.alphavantage.co/ and stored in file Alpha.txt in the same directory as the stock.py file
-	-running stock.py on the same machine as db
+Requires: \n
+	-Installed Oracle DB with table for storing standart OHLC data. This part is taken care in Task 2 where db is installed and includes additional task for creating table stocks_candle (/support_files/create_stock_table.sql for reference)\n
+	-Libraries in Python/stock.py are assubed to be already installed\n
+	-API key needs to be obtained from https://www.alphavantage.co/ and stored in file Alpha.txt in the same directory as the stock.py file\n
+	-running stock.py on the same machine as db\n
 Limitations:
 	-Developed as prototype
 	-Exception handling not implemented due to time constraints
