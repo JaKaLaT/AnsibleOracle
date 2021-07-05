@@ -45,18 +45,20 @@ for i in stock.index:
     print(sql)
 
 # Displays row count in database
-print("Amount of stored data (rows): " + str(query_db("SELECT COUNT(*) FROM stocks_candle")))
+report = ("Amount of stored data (rows): " + str(query_db("SELECT COUNT(*) FROM stocks_candle"))+"\n")
 # Displays the day price rose the most in %
-print("Best % gain in a day (best day & percent gain):" + str(query_db("SELECT DAY, round(((P_CLOSE-P_OPEN)/P_OPEN)*100,2) pct_gain FROM stocks_candle ORDER BY pct_gain DESC FETCH FIRST 1 ROWS ONLY")))
+report += ("Best % gain in a day (best day & percent gain):" + str(query_db("SELECT DAY, round(((P_CLOSE-P_OPEN)/P_OPEN)*100,2) pct_gain FROM stocks_candle ORDER BY pct_gain DESC FETCH FIRST 1 ROWS ONLY"))+"\n")
 # Displays the day price fell the most in %
-print("Worst % loss in a day (worst day & percent loss):" + str(query_db("SELECT DAY, round(((P_CLOSE-P_OPEN)/P_OPEN)*100,2) pct_gain FROM stocks_candle ORDER BY pct_gain ASC FETCH FIRST 1 ROWS ONLY")))
+report += ("Worst % loss in a day (worst day & percent loss):" + str(query_db("SELECT DAY, round(((P_CLOSE-P_OPEN)/P_OPEN)*100,2) pct_gain FROM stocks_candle ORDER BY pct_gain ASC FETCH FIRST 1 ROWS ONLY")))
+print(report)
+with open('stock_report', 'w') as f:
+    f.write(report)
 
 if connection:
     connection.close()
 
 # Time constraints, used the initial retrieved dataframe to plot daily close price chart instead of sql query data
 stock['close'].plot(label = 'close')
-
 
 # Tried to use best practice and binding variables when adding data to db, but failed to finalize due to time constraint
 # sql="INSERT INTO stocks_candle(DAY, P_OPEN, P_HIGH, P_LOW, P_CLOSE, VOLUME) VALUES(DATE :1, :2, :3, :4, :5, :6)"
