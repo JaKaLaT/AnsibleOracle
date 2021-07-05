@@ -1,0 +1,3 @@
+Amount of stored data (rows): [(8512,)]
+Best % gain in a day (best day & percent gain):[(datetime.datetime(2000, 4, 17, 0, 0), 13.12)]
+Worst % loss in a day (worst day & percent loss):[(datetime.datetime(2008, 9, 29, 0, 0), -12)]
