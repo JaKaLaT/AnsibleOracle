@@ -1,0 +1,69 @@
+---
+# tasks file for oracledb_install
+# This file is unedited after lessons learned with further working with Ansible. 
+
+- name: create required directories
+  remote_user: "{{ root_user }}"
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ oracle_user }}"
+    mode: '0755'
+  with_items:
+      - "{{ root_directory }}"
+      - "{{ scripts_directory }}"
+      - "{{ oracle_inventory }}"
+      - "{{ oracle_base }}"
+      - "{{ stage_dir }}"
+      - "{{ oracle_home }}"
+
+- name: Copy database to stage root_directory
+  copy:
+    src: "/etc/ansible/support_files/LINUX.X64_193000_db_home.zip"
+    dest: "{{ stage_dir }}"
+    mode: '0755'
+    owner: "{{ oracle_user }}"
+
+- name: Unpack Oracle 19c Database Software to the target server
+  remote_user: "{{ root_user }}"
+  become: yes
+  unarchive:
+    src: '{{ stage_dir }}/LINUX.X64_193000_db_home.zip'
+    dest: "{{ oracle_home }}"
+    remote_src: yes
+    mode: '0755'
+    owner: "{{ oracle_user }}"
+
+- name: Setup Oracle 19c Database Software silent response file
+  remote_user: "{{ root_user }}"
+  become: yes
+  template: 
+    src: "/etc/ansible/roles/oracledb_install/templates/{{ oradbsoft_rsp }}.rsp.j2" 
+    dest: "{{ stage_dir }}/{{ oradbsoft_rsp }}.rsp" 
+    mode: '0755'
+
+- name: Install Oracle 19c Database Software
+  remote_user: "{{ root_user }}"
+  become: yes
+  command: "export CV_ASSUME_DISTID=OEL8" # Needed to define os version
+  become_user: "{{ oracle_user }}"
+  command: "{{ oracle_home }}/runInstaller -silent -responseFile {{ stage_dir }}/{{ oradbsoft_rsp }}.rsp -ignorePrereqFailure"
+  ignore_errors: True # Tried to remove bad practice, but time shortage and will fail next task if error here
+
+- name: Execute orainstroot.sh
+  remote_user: "{{ root_user }}"
+  shell: "/bin/sh {{ oracle_inventory }}/orainstRoot.sh"
+
+- name: Execute root.sh
+  remote_user: "{{ root_user }}"
+  shell: "/bin/sh {{ oracle_home }}/root.sh"
+
+- name: Remove stage directory
+  file: 
+    path: "{{ stage_dir }}" 
+    state: absent
+- name: display post install message
+  debug:
+    msg:
+      - 'This Steps completed below task for Single Instance at {{ansible_date_time.iso8601}}:'
+      - '- Install Single Instance Oracle Database Software'

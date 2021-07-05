@@ -1,0 +1,13 @@
+---
+# vars file for configure_database
+
+oracle_sid: "cdb2"
+oracle_sys_user: "SYSTEM"
+sys_password: "#BadPractice6"
+data_dir: "/u01/ordata"
+temp_script_dir: "/u01/ordata/temp_scripts/"
+
+oracle_home: "/u01/app/oracle/product/19.2.0/db100"
+ORACLE_HOME: "/u01/app/oracle/product/19.2.0/db100"
+oracle_user: "john"
+root_user: "root"

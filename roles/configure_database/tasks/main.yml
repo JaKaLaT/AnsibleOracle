@@ -1,0 +1,91 @@
+---
+# tasks file for configure_database and running sql*plus scripts for data manipulation. 
+
+- name: Create database
+  become: yes
+  become_user: "{{ oracle_user }}"
+  command:  "{{ oracle_home }}/bin/dbca -silent -createDatabase -templateName General_Purpose.dbc -gdbname {{ oracle_sid }} -sid  {{ oracle_sid }} -characterSet AL32UTF8 -sysPassword {{ sys_password }} -systemPassword {{ sys_password }} -createAsContainerDatabase false -totalMemory 2000 -storageType FS -datafileDestination {{ data_dir }} -emConfiguration NONE -ignorePreReqs -sampleSchema true" 
+
+- name: Enable listener
+  become_user: "{{ root_user }}"
+  become: yes
+  command: "{{ oracle_home }}/bin/lsnrctl start"
+
+- name: Copy create sample table sql script
+  become_user: "{{ oracle_user }}"
+  copy:
+    src: "/etc/ansible/support_files/create_sample_table.sql"
+    dest: "{{ temp_script_dir }}"
+    mode: '0755'
+    owner: "{{ oracle_user }}"
+- name: Copy create sample table sh script
+  become_user: "{{ oracle_user }}"
+  copy:
+    src: "/etc/ansible/support_files/create_sample_table.sh"
+    dest: "{{ temp_script_dir }}"
+    mode: '0755'
+    owner: "{{ oracle_user }}"
+- name: Run create sample table 
+  become_user: "{{ oracle_user }}"
+  command: "{{ temp_script_dir }}create_sample_table.sh"
+
+- name: Copy insert sample data sql script
+  become_user: "{{ oracle_user }}"
+  copy:
+    src: "/etc/ansible/support_files/insert_sample_data.sql"
+    dest: "{{ temp_script_dir }}"
+    mode: '0755'
+    owner: "{{ oracle_user }}"
+- name: Copy insert sample data sh script
+  become_user: "{{ oracle_user }}"
+  copy:
+    src: "/etc/ansible/support_files/insert_sample_data.sh"
+    dest: "{{ temp_script_dir }}"
+    mode: '0755'
+    owner: "{{ oracle_user }}"
+- name: Run insert sample data script
+  become_user: "{{ oracle_user }}"
+  command: "{{ temp_script_dir }}insert_sample_data.sh"
+
+- name: Copy retrieve sample data sql script
+  become_user: "{{ oracle_user }}"
+  copy:
+    src: "/etc/ansible/support_files/retrieve_first_100.sql"
+    dest: "{{ temp_script_dir }}"
+    mode: '0755'
+    owner: "{{ oracle_user }}"
+- name: Copy retrieve sample data sh script
+  become_user: "{{ oracle_user }}"
+  copy:
+    src: "/etc/ansible/support_files/retrieve_first_100.sh"
+    dest: "{{ temp_script_dir }}"
+    mode: '0755'
+    owner: "{{ oracle_user }}"
+- name: Run insert sample data script
+  become_user: "{{ oracle_user }}"
+  command: "{{ temp_script_dir }}retrieve_first_100.sh"
+
+- name: Copy gathered_data.csv 
+  fetch:
+    src: "/home/john/Documents/gathered_data.csv"
+    dest: "/tmp/"
+    flat: yes
+
+# # This is additionaly for me to create a table for task 1 to save time
+- name: Copy create stock table sql script
+  become_user: "{{ oracle_user }}"
+  copy:
+    src: "/etc/ansible/support_files/create_stock_table.sql"
+    dest: "{{ temp_script_dir }}"
+    mode: '0755'
+    owner: "{{ oracle_user }}"
+- name: Copy create stock table sh script
+  become_user: "{{ oracle_user }}"
+  copy:
+    src: "/etc/ansible/support_files/create_stock_table.sh"
+    dest: "{{ temp_script_dir }}"
+    mode: '0755'
+    owner: "{{ oracle_user }}"
+- name: Run insert stock_candle table script
+  become_user: "{{ oracle_user }}"
+  command: "{{ temp_script_dir }}create_stock_table.sh"
