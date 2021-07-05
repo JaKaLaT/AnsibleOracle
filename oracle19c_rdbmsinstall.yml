@@ -1,0 +1,11 @@
+
+- name: Oracle db installation
+  hosts: linux
+  user: root
+  roles:
+    - oracledb_install
+    - configure_database
+  environment:
+    ORACLE_HOME: "{{ oracle_home }}"
+    ORACLE_SID=: "cdb2"
+    PATH: "{{ansible_env.PATH}}:{{ansible_env.HOME}}/bin:{{oracle_home}}/bin"
